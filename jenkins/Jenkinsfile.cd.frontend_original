@@ -17,12 +17,13 @@ pipeline {
         withCredentials([file(credentialsId: KUBECONFIG_FILE, variable: 'KUBECONFIG')]) {
           sh '''
             export KUBECONFIG=$KUBECONFIG
+            aws eks update-kubeconfig --region ap-south-1 --name demo-01
             helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
               --namespace ${NAMESPACE} --create-namespace \
               --set image.repository=${REGISTRY}/frontend \
               --set image.tag=${IMAGE_TAG} \
               --wait --timeout 5m
-            kubectl rollout status deployment/${RELEASE_NAME}-frontend -n ${NAMESPACE} --timeout=3m
+            kubectl rollout status deployment/${RELEASE_NAME} -n ${NAMESPACE} --timeout=3m
           '''
         }
       }

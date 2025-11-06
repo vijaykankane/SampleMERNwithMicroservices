@@ -9,6 +9,7 @@ pipeline {
     RELEASE_NAME = 'frontend'
     NAMESPACE = 'vijay'
     CHART_PATH = 'kubernets/helm/frontend'
+    IMAGE_TAG='latest'
   }
   stages {
     // here assumption the kubeconfig is already configured to point to the correct EKS cluster

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-service
+  name: hello-service-deployment
   namespace: vijay
   labels:
     app: hello-service

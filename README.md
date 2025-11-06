@@ -46,3 +46,7 @@ bash  build-and-push.sh 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containe
  975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/profileservice:latest
 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/helloservice:latest
 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/frontend:latest
+
+ECR creation command need to add in this 
+
+creating kubenerts manifest for the hello and profileservice

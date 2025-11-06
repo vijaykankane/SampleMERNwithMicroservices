@@ -1,0 +1,7 @@
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods -l app={{ include "frontend.fullname" . }} -o jsonpath='{.items[0].metadata.name}')
+  kubectl port-forward $POD_NAME {{ .Values.service.port }}:{{ .Values.service.port }}
+
+2. To override nginx config, update the ConfigMap and then rollout restart:
+  kubectl apply -f configmap.yaml
+  kubectl rollout restart deployment/{{ include "frontend.fullname" . }}

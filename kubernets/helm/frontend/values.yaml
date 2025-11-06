@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/frontend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer   # ClusterIP | NodePort | LoadBalancer
+  port: 3000
+
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "200Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+
+hpa:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+ingress:
+  enabled: false
+  path: /vijay
+  pathType: Prefix
+  host: ""                      # optional host; leave blank for path-only routing
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  ingressClassName: nginx

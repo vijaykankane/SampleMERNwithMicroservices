@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/helloservice
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 3001
+
+config:
+  PORT: 3001
+ 
+
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "200Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+hpa:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80

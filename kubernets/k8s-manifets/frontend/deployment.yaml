@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: vijay
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: 975050024946.dkr.ecr.eu-central-1.amazonaws.com/assginment2/frontend:latest #<account-id>.dkr.ecr.<region>.amazonaws.com/shopnow/frontend:latest
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "200Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        # If you want to override baked-in nginx config, uncomment volumeMount and use ConfigMap below.
+        

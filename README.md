@@ -25,3 +25,16 @@ npm start
 ```
 
 Note: This will run the frontend in the development server. To run in production, build the application by running the command `npm run build`
+
+List of the steps followed to make this application containerized 
+
+Assumption and steps to follow for make it dockerize/kubenets/helm charts then CI CD for the same.
+1. using the mongo free cluster and use it details in the secret
+2. create ECR reporsitory for this application : 
+975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/frontend
+975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/helloservice
+975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/profileservice
+
+3. added docker file for all the three components as per teh need.
+4. create the scripts to create the image and push it to the reposiroty
+bash  build-and-push.sh 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment latest vijay

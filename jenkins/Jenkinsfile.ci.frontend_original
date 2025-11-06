@@ -22,10 +22,13 @@ pipeline {
       steps {
         dir('frontend') {
           
-          withCredentials(credentials: 'vijay-eks-cred', region: 'ap-south-1') {
+          withCredentials([usernamePassword(credentialsId: 'vijay-eks-cred', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')])
+           {
              ecrLogin()
             sh '''
-              
+              aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+              aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+               aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 975050024946.dkr.ecr.eu-central-1.amazonaws.com
               docker build -t ${REGISTRY}/frontend:${IMAGE_TAG} .
               docker push ${REGISTRY}/frontend:${IMAGE_TAG}
             '''

@@ -1,0 +1,37 @@
+pipeline {
+  agent any
+  environment {
+    REGISTRY = "975050024946.dkr.ecr.eu-central-1.amazonaws.com/vijay-shopnow"
+    DOCKER_CREDENTIALS = 'docker-reg-cred'
+    IMAGE_TAG = 'latest'
+  }
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+    stage('Set Image Tag') { steps { script { IMAGE_TAG = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim() } } }
+    stage('Build & Push') {
+      steps {
+        dir('admin') {
+                sh '''
+            # Login to AWS ECR
+            aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 975050024946.dkr.ecr.eu-central-1.amazonaws.com
+
+            # Build and push image
+            docker build -t ${REGISTRY}/admin:${IMAGE_TAG} .
+            docker push ${REGISTRY}/admin:${IMAGE_TAG}
+          '''
+     
+
+          }
+        }
+      }
+    
+    stage('Publish Tag') {
+      steps {
+        writeFile file: 'image-tag.txt', text: "${IMAGE_TAG}"
+        archiveArtifacts artifacts: 'image-tag.txt', fingerprint: true
+      }
+    }
+  }
+  post { always { cleanWs() } }
+}
+

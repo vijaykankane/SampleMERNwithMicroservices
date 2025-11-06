@@ -1,0 +1,59 @@
+pipeline {
+  agent any
+  environment {
+    REGISTRY = "975050024946.dkr.ecr.eu-central-1.amazonaws.com/vijay-shopnow"
+    DOCKER_CREDENTIALS = 'docker-reg-cred'    // Jenkins username/password credential id
+    IMAGE_TAG = 'v2.1.0'
+  }
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Set Image Tag') {
+      steps {
+        script {
+          GIT_SHORT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+          IMAGE_TAG = "${GIT_SHORT}"
+          echo "Image tag: ${IMAGE_TAG}"
+        }
+      }
+    }
+    stage('Build & Push Image') {
+      steps {
+        dir('frontend') {
+              sh '''
+            # Login to AWS ECR
+            aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 975050024946.dkr.ecr.eu-central-1.amazonaws.com
+
+            # Build and push image
+            docker build -t ${REGISTRY}/frontend:${IMAGE_TAG} .
+            docker push ${REGISTRY}/frontend:${IMAGE_TAG}
+          '''
+     
+          }
+        }
+      }
+    
+    stage('Publish Artifact (image tag)') {
+      steps {
+        writeFile file: 'image-tag.txt', text: "${IMAGE_TAG}"
+        archiveArtifacts artifacts: 'image-tag.txt', fingerprint: true
+      }
+    }
+    stage('Optional: Trigger CD') {
+      when { expression { return env.TRIGGER_CD == 'true' } }
+      steps {
+        // Optional: trigger the CD job; set TRIGGER_CD=true in job parameters to enable
+        script {
+          // Replace 'job/shopnow-frontend-cd' with your actual Jenkins CD job path
+          def cdJob = 'CD-Frontend'
+          build job: cdJob, parameters: [string(name: 'IMAGE_TAG', value: env.IMAGE_TAG)], wait: false
+        }
+      }
+    }
+  }
+  post {
+    always { cleanWs() }
+  }
+}
+

@@ -1,0 +1,31 @@
+pipeline {
+  agent any
+  parameters {
+    string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Image tag to deploy')
+  }
+  environment {
+    REGISTRY = "975050024946.dkr.ecr.eu-central-1.amazonaws.com/vijay-shopnow"
+    KUBECONFIG_FILE = 'kubeconfig-credential'
+    RELEASE_NAME = 'backend'
+    NAMESPACE = 'vijay'
+    CHART_PATH = 'kubernetes/helm/charts/backend'
+  }
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+    stage('Deploy') {
+      steps {
+        
+          sh '''
+            helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
+              --namespace ${NAMESPACE} --create-namespace \
+              --set image.repository=${REGISTRY}/backend \
+              --set image.tag=${IMAGE_TAG} \
+              --wait --timeout 5m
+            kubectl rollout status deployment/${RELEASE_NAME} -n ${NAMESPACE} --timeout=3m
+          '''
+        
+      }
+    }
+  }
+}
+

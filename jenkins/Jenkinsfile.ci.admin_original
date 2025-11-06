@@ -1,0 +1,33 @@
+pipeline {
+  agent any
+  environment {
+    REGISTRY = "975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment"
+    DOCKER_CREDENTIALS = 'docker-reg-vijay-cred'
+    IMAGE_TAG = 'latest'
+  }
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+    stage('Set Image Tag') { steps { script { IMAGE_TAG = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim() } } }
+    stage('Build & Push') {
+      steps {
+        dir('frontend') {
+          withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_VIJAY_USER', passwordVariable: 'DOCKER_VIJAY_PASS')]) {
+            sh '''
+              echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin your.registry.example.com
+              docker build -t ${REGISTRY}-admin:${IMAGE_TAG} .
+              docker push ${REGISTRY}-admin:${IMAGE_TAG}
+            '''
+          }
+        }
+      }
+    }
+    stage('Publish Tag') {
+      steps {
+        writeFile file: 'image-tag.txt', text: "${IMAGE_TAG}"
+        archiveArtifacts artifacts: 'image-tag.txt', fingerprint: true
+      }
+    }
+  }
+  post { always { cleanWs() } }
+}
+

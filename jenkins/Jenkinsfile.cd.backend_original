@@ -1,0 +1,32 @@
+pipeline {
+  agent any
+  parameters {
+    string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Image tag to deploy')
+  }
+  environment {
+    REGISTRY = "your.registry.example.com/shopnow"
+    KUBECONFIG_FILE = 'kubeconfig-credential'
+    RELEASE_NAME = 'shopnow-backend'
+    NAMESPACE = 'shopnow-demo'
+    CHART_PATH = 'charts/backend'
+  }
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+    stage('Deploy') {
+      steps {
+        withCredentials([file(credentialsId: KUBECONFIG_FILE, variable: 'KUBECONFIG')]) {
+          sh '''
+            export KUBECONFIG=$KUBECONFIG
+            helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
+              --namespace ${NAMESPACE} --create-namespace \
+              --set image.repository=${REGISTRY}-backend \
+              --set image.tag=${IMAGE_TAG} \
+              --wait --timeout 5m
+            kubectl rollout status deployment/${RELEASE_NAME}-backend -n ${NAMESPACE} --timeout=3m
+          '''
+        }
+      }
+    }
+  }
+}
+

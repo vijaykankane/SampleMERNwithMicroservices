@@ -33,7 +33,7 @@ spec:
           periodSeconds: 20
         readinessProbe:
           httpGet:
-            path: /api/health
+            path: /health
             port: 5000
           initialDelaySeconds: 5
           periodSeconds: 10
@@ -44,4 +44,3 @@ spec:
           limits:
             cpu: "500m"
             memory: "512Mi"
-

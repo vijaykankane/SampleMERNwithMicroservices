@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-profile-config
+  namespace: vijay
+data:
+  PORT : "3002"

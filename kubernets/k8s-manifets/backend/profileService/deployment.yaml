@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-service-deployment
+  namespace: vijay
+  labels:
+    app: profile-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profile-service
+  template:
+    metadata:
+      labels:
+        app: profile-service
+    spec:
+      containers:
+      - name: profile-service
+        image:  975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/profileservice:latest ##<account-id>.dkr.ecr.<region>.amazonaws.com/shopnow/backend:latest
+        ports:
+        - containerPort: 3002
+        envFrom:
+        - configMapRef:
+            name: backend-profile-config
+        - secretRef:
+            name: backend-profile-secret
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "200Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+

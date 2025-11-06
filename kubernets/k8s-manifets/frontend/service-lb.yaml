@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-lb
+  namespace: vijay
+  annotations:
+    # Example: choose nginx LB type; provider will create LB automatically
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+spec:
+  type: LoadBalancer
+  selector:
+    app: frontend
+  ports:
+  - port: 3000
+    targetPort: 3000

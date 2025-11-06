@@ -53,6 +53,6 @@ build_and_push "./backend/profileService" "profileservice" ""
 
 echo "All images built and pushed:"
 echo "  ${REGISTRY}/frontend:${TAG} (for user: ${USER_NAME})"
-echo "  ${REGISTRY}/backend:${TAG}"
-echo "  ${REGISTRY}/admin:${TAG} (for user: ${USER_NAME}-admin)"
+echo "  ${REGISTRY}/helloservice:${TAG}"
+echo "  ${REGISTRY}/profileservice:${TAG} (for user: ${USER_NAME})"
 

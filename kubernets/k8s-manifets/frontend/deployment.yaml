@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: 975050024946.dkr.ecr.eu-central-1.amazonaws.com/assginment2/frontend:latest #<account-id>.dkr.ecr.<region>.amazonaws.com/shopnow/frontend:latest
+        image: 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/frontend:latest #<account-id>.dkr.ecr.<region>.amazonaws.com/shopnow/frontend:latest
         ports:
         - containerPort: 3000
         resources:

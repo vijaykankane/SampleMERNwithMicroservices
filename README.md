@@ -36,5 +36,13 @@ Assumption and steps to follow for make it dockerize/kubenets/helm charts then C
 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/profileservice
 
 3. added docker file for all the three components as per teh need.
+ Docker login steps need to automate in the CI becuase its need to done manually as of now 
+ aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 975050024946.dkr.ecr.eu-central-1.amazonaws.com
+
+
 4. create the scripts to create the image and push it to the reposiroty
 bash  build-and-push.sh 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment latest vijay
+
+ 975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/profileservice:latest
+975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/helloservice:latest
+975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment/frontend:latest

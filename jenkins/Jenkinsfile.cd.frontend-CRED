@@ -1,0 +1,46 @@
+pipeline {
+  agent any
+  parameters {
+    string(name: 'IMAGE_TAG', defaultValue: 'latest', description: 'Image tag to deploy')
+  }
+  environment {
+    REGISTRY = "975050024946.dkr.ecr.eu-central-1.amazonaws.com/containerize-vijay-assignment"
+    KUBECONFIG_FILE = 'vijay-kubeconfig' // Jenkins file credential containing kubeconfig
+    RELEASE_NAME = 'frontend'
+    NAMESPACE = 'vijay'
+    CHART_PATH = 'kubernets/helm/frontend'
+  }
+  stages {
+    // here assumption the kubeconfig is already configured to point to the correct EKS cluster
+    stage('Checkout') { steps { checkout scm } }
+    stage('Deploy (Helm)') {
+      steps {
+
+                 withCredentials([usernamePassword(credentialsId: 'vijay-eks-cred', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')])
+           {
+ 
+        withCredentials([file(credentialsId: KUBECONFIG_FILE, variable: 'KUBECONFIG')]) {
+          sh '''
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+        
+        # Use a writable temp file for kubeconfig
+        mkdir -p $WORKSPACE/.kube
+        export KUBECONFIG=$WORKSPACE/.kube/config
+
+        aws eks update-kubeconfig --region ap-southeast-1 --name demo-01 --kubeconfig $KUBECONFIG
+        
+            helm upgrade --install ${RELEASE_NAME} ${CHART_PATH} \
+              --namespace ${NAMESPACE} --create-namespace \
+              --set image.repository=${REGISTRY}/frontend \
+              --set image.tag=${IMAGE_TAG} \
+              --wait --timeout 5m
+            kubectl rollout status deployment/${RELEASE_NAME} -n ${NAMESPACE} --timeout=3m
+          '''
+        }
+           }
+      }
+    }
+  }
+}
+
